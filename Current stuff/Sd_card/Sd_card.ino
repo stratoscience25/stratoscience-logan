@@ -7,31 +7,24 @@ File logFile;
 void setup() {
   Serial.begin(9600);
   while (!Serial) {
-    ;
+    ; // wait for Serial port to be ready
   }
 
-  Serial.println("Initializing SD card...");
   if (!SD.begin(chipSelect)) {
-    Serial.println("SD card initialization failed!");
-    return;
-  }
-  Serial.println("SD card ready.");
-
-  // Open file for appending
-
+    while (1); // stop here if SD card fails
   }
 }
 
 void loop() {
   if (Serial.available()) {
     String incoming = Serial.readStringUntil('\n'); // read until newline
-    Serial.print("Received: ");
-    Serial.println(incoming);
 
+    // Open file for appending
     logFile = SD.open("log.txt", FILE_WRITE);
     if (!logFile) {
-      Serial.println("Error opening log.txt");
-    logFile.println(incoming)
-    logFile.close()
+    } else {
+      logFile.println(incoming); // <-- fixed missing semicolon
+      logFile.close();           // <-- fixed missing semicolon
+    }
   }
 }
