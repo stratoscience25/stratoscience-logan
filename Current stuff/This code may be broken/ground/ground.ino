@@ -42,6 +42,7 @@ void loop() {
   uint8_t packet[2];
   packet[0] = posx;
   packet[1] = posy;
+  packet[2] = "KC1VVU";
 
   rf95.send(packet, sizeof(packet));
   rf95.waitPacketSent();
