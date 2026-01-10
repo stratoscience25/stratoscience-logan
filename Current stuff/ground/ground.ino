@@ -99,5 +99,5 @@ void loop()
   {
     Serial.println("No reply, is there a listener around?");
   }
-  delay(1000);
+  // delay(1000);
 }
