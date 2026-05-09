@@ -526,7 +526,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "../Ham xposition presentation/",
+      "plot": "Logan_Gerbers/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "logan.step",
