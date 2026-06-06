@@ -66,4 +66,5 @@ fp-info-cache
 *.app
 # Mac and libreoffice stuff
 *.~lock
-.DS_Store
+.DS_StoreCurrent stuff/This code may be broken/ground/ground.ino
+.history/

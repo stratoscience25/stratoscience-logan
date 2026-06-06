@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <string.h>
 
 #define RFM95_CS  4
 #define RFM95_RST 2
@@ -13,13 +14,21 @@
 
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
+const char CALLSIGN[] = "KC1VVU";
+
+struct Packet {
+  uint8_t x;
+  uint8_t y;
+  char callsign[7];   // 6 chars + null terminator
+};
+
 int posx = 0;
 int posy = 0;
 int lastPosX = 0;
 int lastPosY = 0;
 
-bool lastTxState = false;   // previous TX switch state
-bool lastHoldState = false; // previous Hold switch state
+bool lastTxState = false;
+bool lastHoldState = false;
 
 void setup() {
   pinMode(RFM95_RST, OUTPUT);
@@ -83,18 +92,22 @@ void loop() {
 
   // Transmit only if TX switch is pressed
   if (txEnable) {
-    uint8_t packet[2];
-    packet[0] = posx;
-    packet[1] = posy;
+    Packet packet;
 
-    rf95.send(packet, sizeof(packet));
+    packet.x = (uint8_t)posx;
+    packet.y = (uint8_t)posy;
+    strcpy(packet.callsign, CALLSIGN);
+
+    rf95.send((uint8_t *)&packet, sizeof(packet));
     rf95.waitPacketSent();
 
     Serial.print("Sent X: ");
-    Serial.print(posx);
+    Serial.print(packet.x);
     Serial.print(" Y: ");
-    Serial.println(posy);
+    Serial.print(packet.y);
+    Serial.print(" Callsign: ");
+    Serial.println(packet.callsign);
   }
 
-  delay(50); // small delay to debounce switches
+  delay(50); // debounce switches
 }

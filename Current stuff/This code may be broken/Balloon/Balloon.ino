@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 #include <PWMServo.h>
+#include "SoftServo.h"
 
 #define RFM95_CS  4
 #define RFM95_RST 2
@@ -9,20 +10,20 @@
 
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-PWMServo myservoX;
-PWMServo myservoY;
+SoftServo myservoX;   // pin 6
+PWMServo myservoY;    // pin 9
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial);
 
-  myservoX.attach(9);
-  myservoY.attach(10);
+  myservoX.attach(6);
+  myservoX.asyncMode();
+
+  myservoY.attach(9);
 
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
-  // Reset radio
   digitalWrite(RFM95_RST, LOW);
   delay(10);
   digitalWrite(RFM95_RST, HIGH);
@@ -40,20 +41,26 @@ void setup() {
 }
 
 void loop() {
+
+  // MUST be called constantly
+  myservoX.tick();
+
   if (rf95.available()) {
+
     uint8_t buf[2];
     uint8_t len = sizeof(buf);
 
     if (rf95.recv(buf, &len)) {
+
       int posx = buf[0];
       int posy = buf[1];
 
       myservoX.write(posx);
       myservoY.write(posy);
-      delay(10);
-      Serial.print("Received X: ");
+
+      Serial.print("X:");
       Serial.print(posx);
-      Serial.print(" Y: ");
+      Serial.print(" Y:");
       Serial.println(posy);
     }
   }
